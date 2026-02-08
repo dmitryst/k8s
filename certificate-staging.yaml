@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: s-lot-ru-certificate
+  namespace: default
+spec:
+  secretName: s-lot-ru-tls # Название секрета, куда будет сохранен сертификат
+  dnsNames:
+  - s-lot.ru
+  - www.s-lot.ru
+  issuerRef:
+    name: letsencrypt-staging # Используем наш тестовый ClusterIssuer
+    kind: ClusterIssuer

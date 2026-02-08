@@ -1,0 +1,11 @@
+# StorageClass — это, по сути, "инструкция" для облачного провайдера, 
+# описывающая, какой тип диска нужно создать, когда поступает запрос от PersistentVolumeClaim
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cinder-ssd
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: cinder.csi.openstack.org
+parameters:
+  type: ssd

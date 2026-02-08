@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parser-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: parser
+  template:
+    metadata:
+      labels:
+        app: parser
+    spec:
+      containers:
+      - name: lot-parser-container
+        image: dmitryst/s-lot-parser:1.4.25
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1024Mi"
+        env: 
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: DOTNET_gcServer
+          value: "0"
+        - name: BackgroundParsers__Enabled
+          value: "true"
+        - name: ROSREESTR_SERVICE_URL
+          value: "http://rosreestr-service:80" # Используем внутреннее DNS-имя сервиса
+        # тестовый магазин
+        # - name: YooKassa__ShopId
+        #   value: "1194787"    тест
+        # - name: YooKassa__SecretKey
+        #   value: "test_0wphrfSMWVmKL_kcColg2LfSm_52etN6kIBOwuWLWcQ"
+        - name: YooKassa__ShopId
+          value: "1192733"
+        - name: YooKassa__SecretKey
+          value: "live_JaYYm47ErAlJYoXZn-T27oM7ABAvQj6xCtOSY8ZJE6U"
+        - name: CORS_ALLOWED_ORIGINS
+          value: "https://s-lot.ru,https://www.s-lot.ru,http://localhost:3000"
+        - name: Jwt__Key
+          value: "your_super_secret_key_that_is_long_enough_for_sha256"
+        - name: Jwt__Issuer
+          value: "s-lot-api"
+        - name: Jwt__Audience
+          value: "s-lot-front"
+        - name: DeepSeek__ApiKey
+          value: "sk-171434f90cc24013a94d5057257b80e0"
+        - name: DeepSeek__ApiUrl
+          value: "https://api.deepseek.com/v1"
+        # - name: DeepSeek__ApiKey
+        #   value: "sk-mTmKsxHKhj5_kD03vkebTQ"
+        # - name: DeepSeek__ApiUrl
+        #   value: "https://api.artemox.com/v1"
+        - name: DeepSeek__RequestIntervalSeconds
+          value: "5.0"
+        - name: Rosreestr__RequestDelaySeconds
+          value: "19"
+        - name: Parsing__ListIntervalMinutes
+          value: "15"
+        - name: Features__EnableLotRecovery
+          value: "true"
+        - name: MetsEnrichment__IsEnabled
+          value: "true"
+        - name: MetsEnrichment__DelayWhenNoWorkMinutes
+          value: "5"
+        - name: S3__ServiceUrl
+          value: "http://minio.storage.svc.cluster.local:9000"
+        - name: S3__AccessKey
+          value: "admin"
+        - name: S3__SecretKey
+          value: "admin1234"
+        - name: S3__BucketName
+          value: "lots-images"
+        - name: S3__PublicUrlBase
+          value: "https://s-lot.ru"
+        - name: Logging__LogLevel__Default
+          value: "Warning"
+        - name: Logging__LogLevel__FedresursScraper
+          value: "Information"
+        - name: Logging__LogLevel__Microsoft.AspNetCore
+          value: "Warning"
+        - name: Logging__LogLevel__Microsoft.AspNetCore.Hosting.Diagnostics
+          value: "Information"
+          
+        envFrom:
+        - secretRef:
+            name: parser-env-secret
+            
+        ports:
+        - containerPort: 8080
+        
+        volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm
+      
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 512Mi

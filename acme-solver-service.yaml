@@ -1,0 +1,15 @@
+# acme-solver-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-solver-service
+  namespace: istio-system
+spec:
+  ports:
+  - name: http
+    port: 8089
+    protocol: TCP
+    targetPort: 8089
+  selector:
+    # Эта метка есть у всех подов, созданных для HTTP-проверки
+    acme.cert-manager.io/http01-solver: "true"

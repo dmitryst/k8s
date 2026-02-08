@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # URL рабочего окружения Let's Encrypt
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Ваш email для уведомлений
+    email: dmitry_stepanov@inbox.ru
+    privateKeySecretRef:
+      # Секрет для хранения ключа production аккаунта
+      name: letsencrypt-prod-key
+    solvers:
+    - http01:
+        ingress:
+          class: istio

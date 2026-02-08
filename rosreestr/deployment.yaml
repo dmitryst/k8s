@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rosreestr-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rosreestr-service
+  template:
+    metadata:
+      labels:
+        app: rosreestr-service
+    spec:
+      volumes:
+      - name: queue-volume  # Объявляем том с именем "queue-volume"
+        emptyDir: {}       # Тип тома - временная пустая директория
+      - name: output-volume # Объявляем том с именем "output-volume"
+        emptyDir: {}       # Тип тома - временная пустая директория
+
+      containers:
+      - name: rosreestr-app # Контейнер API-сервера
+        image: dmitryst/rosreestr-service-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: queue-volume # Монтируем том 'queue-volume'
+          mountPath: /app/rosreestr_queue # ...в папку /app/rosreestr_queue
+        - name: output-volume # Монтируем том 'output-volume'
+          mountPath: /app/output # ...в папку /app/output  
+
+      - name: rosreestr-worker # Контейнер-сайдкар для воркера
+        image: dmitryst/rosreestr-service-worker:latest
+        imagePullPolicy: Always
+        env:
+          - name: ROSREESTR_PROVIDER
+            value: "pynspd"
+        envFrom:
+        - secretRef:
+            name: proxy-credentials
+        volumeMounts:
+        - name: queue-volume # Монтируем тот же 'queue-volume'
+          mountPath: /app/rosreestr_queue # ...в ту же папку /app/rosreestr_queue
+        - name: output-volume # Монтируем тот же 'output-volume'
+          mountPath: /app/output # ...в ту же папку /app/output

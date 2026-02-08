@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  # ClusterIP — сервис доступен только внутри кластера.
+  # Istio Ingress Gateway будет направлять на него трафик.
+  type: ClusterIP
+  selector:
+    app: frontend
+  ports:
+  - protocol: TCP
+    port: 3000       # Внутренний порт сервиса
+    targetPort: 3000 # Порт на контейнере

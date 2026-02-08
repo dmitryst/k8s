@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: main-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway # Используем стандартный шлюз Istio
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "s-lot.ru"
+    - "www.s-lot.ru"
+    tls:
+      httpsRedirect: true # Включаем автоматический редирект с HTTP на HTTPS
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE  # стандартное одностороннее TLS-шифрование для входящих соединений
+      credentialName: s-lot-ru-tls-prod # Имя секрета с сертификатом
+    hosts:
+    - "s-lot.ru"
+    - "www.s-lot.ru"

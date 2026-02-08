@@ -1,0 +1,12 @@
+prometheus:
+  prometheusSpec:
+    # Уменьшаем хранение до 2 дней (экономит диск и RAM при запуске)
+    retention: 2d
+    # Жестко ограничиваем аппетиты
+    resources:
+      requests:
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+    # Отключаем ненужные скрейперы (опционально)
+    enableAdminAPI: false

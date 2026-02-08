@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: s-lot-ru-certificate-prod
+  # Важно: сертификат создается в том же namespace, что и gateway/секрет
+  namespace: istio-system
+spec:
+  # имя секрета для рабочего сертификата
+  secretName: s-lot-ru-tls-prod
+  dnsNames:
+  - s-lot.ru
+  - www.s-lot.ru
+  issuerRef:
+    # Используем production ClusterIssuer
+    name: letsencrypt-prod
+    kind: ClusterIssuer
