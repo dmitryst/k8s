@@ -24,6 +24,17 @@ spec:
         port:
           number: 8089
 
+  # ПРАВИЛО ДЛЯ MINIO (Картинки)
+  - name: "minio-images"
+    match:
+    - uri:
+        prefix: "/lots-images"
+    route:
+    - destination:
+        host: minio.storage.svc.cluster.local 
+        port:
+          number: 9000
+
   # ПРАВИЛО ДЛЯ API
   - name: "api-routing"
     match:
