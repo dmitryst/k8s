@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: lot-parser-container
-        image: dmitryst/s-lot-parser:1.4.25
+        image: dmitryst/s-lot-parser:1.4.29
         imagePullPolicy: Always
         resources:
           requests:

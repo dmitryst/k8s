@@ -4,10 +4,10 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: main-virtual-service
-  namespace: default
+  namespace: istio-system 
 spec:
   gateways:
-  - istio-system/main-gateway
+  - main-gateway
   hosts:
   - "s-lot.ru"
   - "www.s-lot.ru"
@@ -47,6 +47,8 @@ spec:
         exact: "www.s-lot.ru"
       uri:
         prefix: "/api"
+    # Добавляем таймаут 5 минут, так как DeepSeek может думать долго
+    # timeout: 300s
     corsPolicy:
       allowOrigins:
       - exact: "https://s-lot.ru"
@@ -84,3 +86,10 @@ spec:
         host: frontend-service.default.svc.cluster.local
         port:
           number: 3000
+    # костыль проблемы с неработающим фронтендом (до конца не понятно работает он или нет)
+    # заставляем Istio автоматически повторять запрос, если он наткнулся на закрытое соединение
+    # бесконечный цикл ретраев (костыль, но рабочий)
+    retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: gateway-error,connect-failure,refused-stream,reset,503

@@ -1,0 +1,22 @@
+# DestinationRule управляет тем, как Istio подключается к сервису после того, как маршрут уже выбран. 
+# Без него Istio использует настройки "по умолчанию", которые могут конфликтовать с приложением (Node.js/Next.js/ASP.NET).
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: frontend-destination-rule
+  namespace: default
+spec:
+  host: frontend-service.default.svc.cluster.local
+  trafficPolicy:
+    connectionPool:
+      http:
+        # Макс. число запросов перед закрытием (защита от "висяков")
+        maxRequestsPerConnection: 1000
+        # Таймаут простоя. Сделать его МЕНЬШЕ, чем таймаут в приложении!
+        # Если в Node.js/Kestrel дефолт 120с, ставьте тут 60с.
+        idleTimeout: 60s
+      tcp:
+        # Таймаут TCP-соединения
+        tcpKeepalive:
+          time: 60s
+          interval: 20s
