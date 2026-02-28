@@ -15,3 +15,7 @@ spec:
     - http01:
         ingress:
           class: istio
+          podTemplate:
+            spec:
+              nodeSelector:
+                kubernetes.io/os: linux
