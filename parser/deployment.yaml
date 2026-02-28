@@ -14,15 +14,17 @@ spec:
     spec:
       containers:
       - name: lot-parser-container
-        image: dmitryst/s-lot-parser:1.4.29
+        image: dmitryst/s-lot-parser:1.5.3
         imagePullPolicy: Always
         resources:
           requests:
             cpu: "250m"
             memory: "512Mi"
+            ephemeral-storage: "1Gi"
           limits:
             cpu: "500m"
             memory: "1024Mi"
+            ephemeral-storage: "2Gi"
         env: 
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
@@ -87,6 +89,20 @@ spec:
           value: "Warning"
         - name: Logging__LogLevel__Microsoft.AspNetCore.Hosting.Diagnostics
           value: "Information"
+        - name: IndexNow__Host
+          value: "s-lot.ru"
+        - name: IndexNow__Key
+          value: "b457845c-d356-4935-8b7f-5ef3204ac89c"
+        - name: IndexNow__ApiUrl
+          value: "https://api.indexnow.org/indexnow"
+        - name: BackgroundServices__TradeStatusesUpdate__Enabled
+          value: "true"
+        - name: BackgroundServices__TradeStatusesUpdate__RunOnStartup
+          value: "false"
+        - name: BackgroundServices__TradeStatusesUpdate__RunAtHour
+          value: "2"
+        - name: BackgroundServices__TradeStatusesUpdate__BatchSize
+          value: "10"
           
         envFrom:
         - secretRef:

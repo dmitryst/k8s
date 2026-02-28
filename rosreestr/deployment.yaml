@@ -20,7 +20,7 @@ spec:
 
       containers:
       - name: rosreestr-app # Контейнер API-сервера
-        image: dmitryst/rosreestr-service-app:latest
+        image: dmitryst/rosreestr-service-app:1.0.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
@@ -31,11 +31,11 @@ spec:
           mountPath: /app/output # ...в папку /app/output  
 
       - name: rosreestr-worker # Контейнер-сайдкар для воркера
-        image: dmitryst/rosreestr-service-worker:latest
+        image: dmitryst/rosreestr-service-worker:1.0.5
         imagePullPolicy: Always
-        env:
-          - name: ROSREESTR_PROVIDER
-            value: "pynspd"
+        # env:
+        #   - name: ROSREESTR_PROVIDER
+        #     value: "rosreestr2coord" # rosreestr2coord или pynspd 
         envFrom:
         - secretRef:
             name: proxy-credentials
