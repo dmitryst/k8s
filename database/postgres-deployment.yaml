@@ -16,10 +16,18 @@ spec:
         - name: postgres-storage
           persistentVolumeClaim:
             claimName: postgres-pvc
-  
       containers:
         - name: postgres
           image: dmitryst/lot-postgres:v1  # образ postgres со словарями
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+              ephemeral-storage: "2Gi"
+            limits:
+              cpu: "500m"        # Половина ядра для тяжелых запросов
+              memory: "512Mi"
+              ephemeral-storage: "5Gi"
           ports:
             - containerPort: 5432
           env:

@@ -16,8 +16,17 @@ spec:
     spec:
       containers:
       - name: frontend-container
-        image: dmitryst/lot-app:latest
+        image: dmitryst/lot-app:1.4.4
         imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "50m"         # 5% от одного ядра
+            memory: "128Mi"
+            ephemeral-storage: "500Mi"
+          limits:
+            cpu: "250m"        # Максимум 25% ядра при пиковой нагрузке
+            memory: "256Mi"    # Защита от утечек памяти в Node.js
+            ephemeral-storage: "1Gi"
         ports:
         - containerPort: 3000
         envFrom:
