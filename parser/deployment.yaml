@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: lot-parser-container
-        image: dmitryst/s-lot-parser:1.5.3
+        image: dmitryst/s-lot-parser:1.6.4
         imagePullPolicy: Always
         resources:
           requests:
@@ -65,8 +65,6 @@ spec:
           value: "19"
         - name: Parsing__ListIntervalMinutes
           value: "15"
-        - name: Features__EnableLotRecovery
-          value: "true"
         - name: MetsEnrichment__IsEnabled
           value: "true"
         - name: MetsEnrichment__DelayWhenNoWorkMinutes
@@ -100,9 +98,50 @@ spec:
         - name: BackgroundServices__TradeStatusesUpdate__RunOnStartup
           value: "false"
         - name: BackgroundServices__TradeStatusesUpdate__RunAtHour
-          value: "2"
+          value: "23" # - в 2 по Москве
         - name: BackgroundServices__TradeStatusesUpdate__BatchSize
           value: "10"
+        - name: BackgroundServices__TradeStatusesUpdate__StuckBiddingTimeoutDays
+          value: "30"
+        - name: BackgroundServices__LotRecoveryService__Enabled
+          value: "true"
+        - name: BackgroundServices__LotRecoveryService__BatchSize
+          value: "10"
+        - name: BackgroundServices__LotRecoveryService__MaxAttempts
+          value: "2"
+        # Пробрасываем несекретные настройки напрямую
+        - name: SmtpSettings__FromEmail
+          value: "info@s-lot.ru"
+        - name: SmtpSettings__FromName
+          value: "Оповещения s-lot.ru"
+          
+        # Пробрасываем секреты из K8s Secret
+        - name: SmtpSettings__Host
+          valueFrom:
+            secretKeyRef:
+              name: smtp-credentials
+              key: host
+        - name: SmtpSettings__Port
+          valueFrom:
+            secretKeyRef:
+              name: smtp-credentials
+              key: port
+        - name: SmtpSettings__Username
+          valueFrom:
+            secretKeyRef:
+              name: smtp-credentials
+              key: username
+        - name: SmtpSettings__Password
+          valueFrom:
+            secretKeyRef:
+              name: smtp-credentials
+              key: password
+
+        - name: AdminSettings__ApiKey
+          valueFrom:
+            secretKeyRef:
+              name: admin-api-secret
+              key: AdminSettings__ApiKey
           
         envFrom:
         - secretRef:
