@@ -14,16 +14,16 @@ spec:
     spec:
       containers:
       - name: lot-parser-container
-        image: dmitryst/s-lot-parser:1.6.4
+        image: dmitryst/s-lot-parser:1.6.9
         imagePullPolicy: Always
         resources:
           requests:
-            cpu: "250m"
-            memory: "512Mi"
+            cpu: "500m"
+            memory: "1Gi"
             ephemeral-storage: "1Gi"
           limits:
-            cpu: "500m"
-            memory: "1024Mi"
+            cpu: "1000m" # Chrome любит CPU при старте и парсинге JS
+            memory: "2048Mi"
             ephemeral-storage: "2Gi"
         env: 
         - name: ASPNETCORE_ENVIRONMENT
@@ -94,11 +94,11 @@ spec:
         - name: IndexNow__ApiUrl
           value: "https://api.indexnow.org/indexnow"
         - name: BackgroundServices__TradeStatusesUpdate__Enabled
-          value: "true"
+          value: "false"
         - name: BackgroundServices__TradeStatusesUpdate__RunOnStartup
           value: "false"
         - name: BackgroundServices__TradeStatusesUpdate__RunAtHour
-          value: "23" # - в 2 по Москве
+          value: "21" # - в 0 по Москве
         - name: BackgroundServices__TradeStatusesUpdate__BatchSize
           value: "10"
         - name: BackgroundServices__TradeStatusesUpdate__StuckBiddingTimeoutDays
@@ -142,6 +142,27 @@ spec:
             secretKeyRef:
               name: admin-api-secret
               key: AdminSettings__ApiKey
+
+        - name: ProxySettings__Host
+          valueFrom:
+            secretKeyRef:
+              name: proxy-settings
+              key: PROXY_HOST
+        - name: ProxySettings__Port
+          valueFrom:
+            secretKeyRef:
+              name: proxy-settings
+              key: PROXY_PORT
+        - name: ProxySettings__Username
+          valueFrom:
+            secretKeyRef:
+              name: proxy-settings
+              key: PROXY_USER
+        - name: ProxySettings__Password
+          valueFrom:
+            secretKeyRef:
+              name: proxy-settings
+              key: PROXY_PASS
           
         envFrom:
         - secretRef:
